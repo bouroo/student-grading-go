@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestParseCSV(t *testing.T) {
@@ -16,6 +17,16 @@ func TestParseCSV(t *testing.T) {
 
 	ls := student{"Solomon", "Hunter", "Boston University", 45, 62, 32, 58}
 	a.Equal(ls, students[29], "Last student should be Solomon")
+}
+
+func BenchmarkParseCSV(b *testing.B) {
+	b.ReportAllocs()
+	b.StartTimer()
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			parseCSV("grades.csv")
+		}
+	})
 }
 
 func TestCalculateGrade(t *testing.T) {
@@ -33,6 +44,16 @@ func TestCalculateGrade(t *testing.T) {
 	}
 }
 
+func BenchmarkCalculateGrade(b *testing.B) {
+	b.ReportAllocs()
+	b.StartTimer()
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			calculateGrade(parseCSV("grades.csv"))
+		}
+	})
+}
+
 func TestFindOverallTopper(t *testing.T) {
 	gradedStudents := calculateGrade(parseCSV("grades.csv"))
 
@@ -40,6 +61,16 @@ func TestFindOverallTopper(t *testing.T) {
 	want := student{"Bernard", "Wilson", "Boston University", 90, 85, 76, 71}
 
 	assert.Equal(t, got, want)
+}
+
+func BenchmarkFindOverallTopper(b *testing.B) {
+	b.ReportAllocs()
+	b.StartTimer()
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			findOverallTopper(calculateGrade(parseCSV("grades.csv")))
+		}
+	})
 }
 
 func TestFindTopperPerUniversity(t *testing.T) {
@@ -58,4 +89,14 @@ func TestFindTopperPerUniversity(t *testing.T) {
 	a.Equal(unionTopper, tpu["Union College"].student, "Union College topper should be Izayah, but got %v", tpu["Union College"].firstName)
 	a.Equal(calTopper, tpu["University of California"].student, "University of California topper should be Karina, but got %v", tpu["University of California"].firstName)
 	a.Equal(floTopper, tpu["University of Florida"].student, "University of Florida topper should be Nathan, but got %v", tpu["University of Florida"].firstName)
+}
+
+func BenchmarkTopperPerUniversity(b *testing.B) {
+	b.ReportAllocs()
+	b.StartTimer()
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			findTopperPerUniversity(calculateGrade(parseCSV("grades.csv")))
+		}
+	})
 }
