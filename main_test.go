@@ -23,9 +23,11 @@ func BenchmarkParseCSV(b *testing.B) {
 	b.ReportAllocs()
 	b.StartTimer()
 	b.RunParallel(func(pb *testing.PB) {
+		var res []student
 		for pb.Next() {
-			parseCSV("grades.csv")
+			res = parseCSV("grades.csv")
 		}
+		_ = res
 	})
 }
 
@@ -48,9 +50,11 @@ func BenchmarkCalculateGrade(b *testing.B) {
 	b.ReportAllocs()
 	b.StartTimer()
 	b.RunParallel(func(pb *testing.PB) {
+		var res []studentStat
 		for pb.Next() {
-			calculateGrade(parseCSV("grades.csv"))
+			res = calculateGrade(parseCSV("grades.csv"))
 		}
+		_ = res
 	})
 }
 
@@ -67,9 +71,11 @@ func BenchmarkFindOverallTopper(b *testing.B) {
 	b.ReportAllocs()
 	b.StartTimer()
 	b.RunParallel(func(pb *testing.PB) {
+		var res studentStat
 		for pb.Next() {
-			findOverallTopper(calculateGrade(parseCSV("grades.csv")))
+			res = findOverallTopper(calculateGrade(parseCSV("grades.csv")))
 		}
+		_ = res
 	})
 }
 
@@ -95,8 +101,10 @@ func BenchmarkTopperPerUniversity(b *testing.B) {
 	b.ReportAllocs()
 	b.StartTimer()
 	b.RunParallel(func(pb *testing.PB) {
+		var res map[string]studentStat
 		for pb.Next() {
-			findTopperPerUniversity(calculateGrade(parseCSV("grades.csv")))
+			res = findTopperPerUniversity(calculateGrade(parseCSV("grades.csv")))
 		}
+		_ = res
 	})
 }
